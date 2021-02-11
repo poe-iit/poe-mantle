@@ -1,11 +1,19 @@
 package com.poe.webserver;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class Node {
 
     // human readable name describing the node, like "west hallway"
     private String name;
     private String macAddress;
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
     private int[] connections;
 
@@ -14,6 +22,13 @@ public class Node {
         this.macAddress = macAddress;
         this.id = id;
         this.connections = connections;
+    }
+
+    public Node() {
+        this.name = "";
+        this.macAddress = "";
+        this.id = 0;
+        this.connections = null;
     }
 
     public String getName() {
