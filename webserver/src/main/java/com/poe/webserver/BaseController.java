@@ -24,7 +24,7 @@ public class BaseController {
 		return nodes;
 	}
 
-	// Add a node to the db, then look up mac addresses of neighbors and call new node
+	// Add a node to the db, then look up ip addresses of neighbors and call new node
 	@PostMapping("/api/v1/add")
 	public Node addNode(@RequestBody Node node) {
 		Node savedNode = repository.save(node);
@@ -41,10 +41,10 @@ public class BaseController {
 
 	// This method takes an id of a node that is in the network
 	// It will add that id to the node's list of neighbors
-	// It will send a message to the node with the new neighbor node's mac address
+	// It will send a message to the node with the new neighbor node's ip address
 	@PostMapping("/api/v1/{id}/add")
 	public Node addConnection(@RequestBody Integer neighborId, @PathVariable int id) {
-		// TODO: Add neighbor node id to list of ids, and look up mac address
+		// TODO: Add neighbor node id to list of ids, and look up ip address
 		Node node = new Node("Garage", "87:65:43:21", 1, null);
 		node.setConnections(new int[] {neighborId});
 		return node;
