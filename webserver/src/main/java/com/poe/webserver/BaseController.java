@@ -1,10 +1,15 @@
 package com.poe.webserver;
 
 import java.util.ArrayList;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class BaseController {
+	@Autowired
+	NetworkRepository repository;
+
 	@GetMapping("/")
 	public ResponseMessage index() {
 		// TODO: Decide how we handle the response for invalid urls
@@ -15,23 +20,23 @@ public class BaseController {
 	@GetMapping("/api/v1/status")
 	public ArrayList<Node> status() {
 		// TODO: get list of nodes from db, check health of each, add to list, return list
-		ArrayList<Node> nodes = new ArrayList<>();
+		ArrayList<Node> nodes = repository.findAll();
 		return nodes;
 	}
 
 	// Add a node to the db, then look up mac addresses of neighbors and call new node
 	@PostMapping("/api/v1/add")
 	public Node addNode(@RequestBody Node node) {
-		node.setId(1); 
-		return node;
+		Node savedNode = repository.save(node);
+		return savedNode;
 	}
 
 	// Get node information from db, then call out to node to check availability.
 	@GetMapping("/api/v1/{id}/status")
 	public Node nodeStatus(@PathVariable int id) {
 		// TODO: Actually get this node from the database
-		Node mockNode = new Node("Attic", "12:34:56:78", 1, null);
-		return mockNode;
+		Node node = repository.findById(id);
+		return node;
 	}
 
 	// This method takes an id of a node that is in the network
