@@ -1,5 +1,8 @@
 package com.poe.webserver;
 
+import java.util.Set;
+import java.util.HashSet;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -61,5 +64,27 @@ public class Node {
 
     public void setConnections(int[] connections) {
         this.connections = connections;
+    }
+
+    public void addConnection(int id) {
+        // pull out connection ids into ArrayList for easy manipulation
+		Set<Integer> connectionsSet = new HashSet<>();
+		for (int con: this.getConnections()) {
+			connectionsSet.add(con);
+		}
+        connectionsSet.add(id);
+
+        this.setConnections(connectionsSet.stream().mapToInt(Integer::intValue).toArray());
+    }
+
+    public void removeConnection(int id) {
+        // pull out connection ids into ArrayList for easy manipulation
+		Set<Integer> connectionsSet = new HashSet<>();
+		for (int con: this.getConnections()) {
+			connectionsSet.add(con);
+		}
+        connectionsSet.remove(id);
+
+        this.setConnections(connectionsSet.stream().mapToInt(Integer::intValue).toArray());
     }
 }
