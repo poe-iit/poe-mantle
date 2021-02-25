@@ -10,23 +10,23 @@ public class Node {
 
     // human readable name describing the node, like "west hallway"
     private String name;
-    private String macAddress;
+    private String ipAddress;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
     private int[] connections;
 
-    public Node(String name, String macAddress, int id, int[] connections) {
+    public Node(String name, String ipAddress, int id, int[] connections) {
         this.name = name;
-        this.macAddress = macAddress;
+        this.ipAddress = ipAddress;
         this.id = id;
         this.connections = connections;
     }
 
     public Node() {
         this.name = "";
-        this.macAddress = "";
+        this.ipAddress = "";
         this.id = 0;
         this.connections = null;
     }
@@ -35,8 +35,8 @@ public class Node {
         return this.name;
     }
 
-    public String getMacAddress() {
-        return this.macAddress;
+    public String getIPAddress() {
+        return this.ipAddress;
     }
 
     public int getId() {
@@ -51,8 +51,8 @@ public class Node {
         this.name = name;
     }
 
-    public void setMacAddress(String macAddress) {
-        this.macAddress = macAddress;
+    public void setIPAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public void setId(int id) {
