@@ -20,7 +20,7 @@ public class BaseController {
 	@GetMapping("/api/v1/status")
 	public ArrayList<Node> status() {
 		// TODO: get list of nodes from db, check health of each, add to list, return list
-		ArrayList<Node> nodes = new ArrayList<>();
+		ArrayList<Node> nodes = repository.findAll();
 		return nodes;
 	}
 
