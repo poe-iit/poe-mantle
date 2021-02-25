@@ -38,7 +38,7 @@ public class BaseController {
 		if (node == null) {
 			return new ResponseMessage("Error", "Could not find node with id " + id);
 		}
-		return new NodeResponseMessage("", "", node);
+		return new NodeResponseMessage("Success", "Node found", node);
 	}
 
 	// This method takes an id of a node that is in the network
