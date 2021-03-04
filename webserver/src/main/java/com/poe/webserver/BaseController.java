@@ -2,6 +2,8 @@ package com.poe.webserver;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +15,9 @@ public class BaseController {
 	NetworkRepository repository;
 
 	@GetMapping("/")
-	public ResponseMessage index() {
+	public ResponseEntity index() {
 		// TODO: Decide how we handle the response for invalid urls
-		return new ResponseMessage("Error", "Invalid URL");
+		return new ResponseEntity<>(new BroadcastMessage("Invalid URL", "Error", 0), HttpStatus.NOT_FOUND);
 	}
 
 	// Return list of nodes and their availability
@@ -39,7 +41,7 @@ public class BaseController {
 	public ResponseEntity deleteNode(@PathVariable int id) {
 		Node node = repository.findById(id);
 		if (node == null) {
-			return new ResponseEntity<>("Could not find node with id " + id, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new BroadcastMessage("Could not find node with id " + id, "error", 0), HttpStatus.NOT_FOUND);
 		}
 
 		for (int connectionId: node.getConnections()) {
@@ -60,7 +62,7 @@ public class BaseController {
 	public ResponseEntity nodeStatus(@PathVariable int id) {
 		Node node = repository.findById(id);
 		if (node == null) {
-			return new ResponseEntity<>("Could not find node with id " + id, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new BroadcastMessage("Could not find node with id " + id, "error", 0), HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(node, HttpStatus.OK);
 	}
@@ -71,18 +73,18 @@ public class BaseController {
 	@PostMapping("/api/v1/{id}/add")
 	public ResponseEntity addConnection(@RequestBody Integer neighborId, @PathVariable int id) {
 		if (neighborId == id) {
-			return new ResponseEntity<>("Cannot add node as neighbor to itself", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new BroadcastMessage("Cannot add node as neighbor to itself", "error", id), HttpStatus.BAD_REQUEST);
 		}
 
 		// get nodes from database
 		Node targetNode = repository.findById(id);
 		if (targetNode == null) {
-			return new ResponseEntity<>("Could not find node with id " + id, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new BroadcastMessage("Could not find node with id " + id, "error", 0), HttpStatus.NOT_FOUND);
 		}
 
 		Node neighborNode = repository.findById((int)neighborId);
 		if (neighborNode == null) {
-			return new ResponseEntity<>("Could not find node with id " + neighborId, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new BroadcastMessage("Could not find node with id " + neighborId, "error", 0), HttpStatus.NOT_FOUND);
 		}
 
 		targetNode.addConnection(neighborId);
@@ -104,17 +106,17 @@ public class BaseController {
 	@DeleteMapping("/api/v1/{id}/remove")
 	public ResponseEntity removeConnection(@RequestBody Integer neighborId, @PathVariable int id) {
 		if (neighborId == id) {
-			return new ResponseEntity<>("A node cannot be its own neighbor", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new BroadcastMessage("A node cannot be its own neighbor", "error", id), HttpStatus.BAD_REQUEST);
 		}
 		
 		Node targetNode = repository.findById(id);
 		if (targetNode == null) {
-			return new ResponseEntity<>("Could not find node with id " + id, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new BroadcastMessage("Could not find node with id " + id, "error", 0), HttpStatus.NOT_FOUND);
 		}
 
 		Node neighborNode = repository.findById((int)neighborId);
 		if (neighborNode == null) {
-			return new ResponseEntity<>("Could not find node with id " + neighborId, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new BroadcastMessage("Could not find node with id " + neighborId, "error", 0), HttpStatus.NOT_FOUND);
 		}
 
 		targetNode.removeConnection(neighborId);
@@ -139,10 +141,10 @@ public class BaseController {
 		ArrayList<Node> nodeList = repository.findAll();
 		for (Node node: nodeList) {
 			if (attemptBroadcast(node)) {
-				return new ResponseEntity<>(new ResponseMessage("Success", "Message broadcast to entry node " + node.getId()), HttpStatus.OK);
+				return new ResponseEntity<>(new BroadcastMessage("Message broadcast to entry node " + node.getId(), "Info", 0), HttpStatus.OK);
 			}
 		}
-		return new ResponseEntity<>("No response from nodes", HttpStatus.SERVICE_UNAVAILABLE);
+		return new ResponseEntity<>(new BroadcastMessage("No response from nodes", "Error", 0), HttpStatus.SERVICE_UNAVAILABLE);
 	}
 
 	// internal method used to start a broadcast chain
