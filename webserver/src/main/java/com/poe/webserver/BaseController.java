@@ -60,7 +60,7 @@ public class BaseController {
 		}
 		repository.delete(node);
 
-		return new ResponseEntity<>("", HttpStatus.OK);
+		return new ResponseEntity<>(new BroadcastMessage("Node successfully deleted", "Info", 0), HttpStatus.OK);
 	}
 
 	// Get node information from db, then call out to node to check availability.
