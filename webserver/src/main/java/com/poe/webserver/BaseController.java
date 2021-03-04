@@ -28,6 +28,12 @@ public class BaseController {
 		return new ResponseEntity<>(nodes, HttpStatus.OK);
 	}
 
+	@DeleteMapping("/api/v1/delete/all") 
+	public ResponseEntity deleteAll() {
+		repository.deleteAll();
+		return new ResponseEntity<>(new BroadcastMessage("All nodes were deleted", "Info", 0), HttpStatus.ACCEPTED);
+	}
+
 	// Add a node to the db, then look up ip addresses of neighbors and call new node
 	@PostMapping("/api/v1/add")
 	public ResponseEntity addNode(@RequestBody Node node) {
@@ -37,7 +43,7 @@ public class BaseController {
 
 	// Find all the neighbors, remove this node from their connections list, then 
 	// remove the node from the db
-	@DeleteMapping("/api/v1/{id}/delete")
+	@DeleteMapping("/api/v1/delete/{id}")
 	public ResponseEntity deleteNode(@PathVariable int id) {
 		Node node = repository.findById(id);
 		if (node == null) {
